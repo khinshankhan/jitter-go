@@ -22,15 +22,11 @@ func NewFull(cfg Config) Strategy {
 }
 
 func (f *fullJitter) Next(attempt int) int64 {
-	if attempt < 0 {
-		return 0
-	}
-
 	// base * 2^attempt, clamped to cap
-	// TODO: circle back and handle potential overflow
-	max := f.base << attempt
-	if max <= 0 || max > f.cap {
-		max = f.cap
+	max := expCap(f.base, f.cap, attempt)
+
+	if max < 0 {
+		return 0
 	}
 
 	// U[0, max)
