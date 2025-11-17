@@ -192,6 +192,13 @@ anyway.
 when the timer fires, creating a _temporary leak_. In long-running loops, this can create temporary
 buildup.
 
+> [!TIP]
+>
+> This isn't relevant anymore from Go 1.23
+>
+> Read more about it https://go.dev/wiki/Go123Timer but basically they changed the implementation
+> :slightly_smiling_face:
+
 `time.NewTimer(d)` lets you:
 
 - cancel early if another condition fires first
