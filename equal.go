@@ -8,17 +8,17 @@ type equalJitter struct {
 }
 
 // NewEqual returns a Strategy using the "equal jitter" algorithm.
-// It panics if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
-func NewEqual(cfg Config) Strategy {
-	if cfg.Base <= 0 || cfg.Cap <= 0 || cfg.Random == nil {
-		panic("jitter: invalid equal jitter config")
+// Returns an error if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
+func NewEqual(cfg Config) (Strategy, error) {
+	if issues := getJitterConfigIssues(cfg); len(issues) > 0 {
+		return nil, &ConfigError{Issues: issues}
 	}
 
 	return &equalJitter{
 		base:   cfg.Base,
 		cap:    cfg.Cap,
 		random: cfg.Random,
-	}
+	}, nil
 }
 
 func (e *equalJitter) Next(attempt int) int64 {

@@ -1,5 +1,10 @@
 package jitter
 
+import (
+	"errors"
+	"strings"
+)
+
 // Strategy returns a non-negative integer "delay" for a given attempt.
 // Units are arbitrary (eg milliseconds), the caller decides.
 type Strategy interface {
@@ -40,4 +45,36 @@ func expCap(base, cap int64, attempt int) int64 {
 		return cap
 	}
 	return max
+}
+
+func getJitterConfigIssues(cfg Config) []string {
+	var issues []string
+	if cfg.Base <= 0 {
+		issues = append(issues, "Base must be > 0")
+	}
+	if cfg.Cap <= 0 {
+		issues = append(issues, "Cap must be > 0")
+	}
+	if cfg.Random == nil {
+		issues = append(issues, "Random function must be provided")
+	}
+	return issues
+}
+
+// ErrInvalidConfig is returned when a jitter config is invalid.
+var ErrInvalidConfig = errors.New("jitter: invalid config")
+
+// ConfigError describes an invalid jitter config.
+// Use errors.Is(err, ErrInvalidConfig) to check for this error.
+type ConfigError struct {
+	// List of details why given config is invalid.
+	Issues []string
+}
+
+func (e *ConfigError) Error() string {
+	return "jitter: invalid config: " + strings.Join(e.Issues, ", ")
+}
+
+func (e *ConfigError) Is(target error) bool {
+	return target == ErrInvalidConfig
 }
