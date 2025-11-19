@@ -49,11 +49,15 @@ func main() {
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	backoff := jitter.New(jitter.Config{
+	backoff, jitterErr := jitter.New(jitter.Config{
 		Base:   100,      // 100 ms units
 		Cap:    10_000,   // cap at 10s (in ms units)
 		Random: r.Int63n, // U[0, n)
 	})
+
+	if jitterErr != nil {
+		// deal with err, indicates bad config
+	}
 
 	const maxAttempts = 5
 	for attempt := 0; attempt < maxAttempts; attempt++ {
@@ -84,11 +88,15 @@ timeouts (eg Lambdas, Cloud Run tasks, cronjobs, etc). This is how it may look:
 
 ```go
 r := rand.New(rand.NewSource(time.Now().UnixNano()))
-backoff := jitter.New(jitter.Config{
+backoff, jitterErr := jitter.New(jitter.Config{
 	Base:   100,
 	Cap:    10_000,
 	Random: r.Int63n,
 })
+
+if jitterErr != nil {
+	// deal with err, indicates bad config
+}
 
 const maxAttempts = 5
 for attempt := 0; attempt < maxAttempts; attempt++ {
@@ -117,6 +125,34 @@ return fmt.Errorf("retries exhausted")
 
 This makes cancellation immediate and avoids the temporary leaks associated with `time.After` (more
 below).
+
+### Error handling
+
+It's idiomatic to return an error for app-level code to decide how to handle rather than panic
+internally. This library follows that philosophy and then some.
+
+If an invalid jitter config is passed in, the error is returned
+
+```go
+if jitterErr != nil {
+	// deal with err, indicates bad config
+}
+```
+
+However it's likely useful to be able to inspect which config fields are problematic so we expose
+`Issues` which can be inspected:
+
+```go
+if jitterErr != nil {
+	// Check if the error is of type jitter.ConfigError
+	if configErr, ok := jitterErr.(*jitter.ConfigError); ok {
+		fmt.Println("Configuration issues:")
+		for _, issue := range configErr.Issues {
+			fmt.Println("-", issue)
+		}
+	}
+}
+```
 
 ## Notes
 
