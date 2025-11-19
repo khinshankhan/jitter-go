@@ -11,14 +11,14 @@ type decorrelatedJitter struct {
 }
 
 // NewDecorrelated returns a Strategy using the "decorrelated jitter" algorithm.
-// It panics if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
+// Returns an error if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
 //
 // The returned Strategy is stateful and not safe for concurrent use from
 // multiple goroutines. Callers should create a new Strategy for each
 // independent retry loop.
-func NewDecorrelated(cfg Config) Strategy {
-	if cfg.Base <= 0 || cfg.Cap <= 0 || cfg.Random == nil {
-		panic("jitter: invalid decorrelated jitter config")
+func NewDecorrelated(cfg Config) (Strategy, error) {
+	if issues := getJitterConfigIssues(cfg); len(issues) > 0 {
+		return nil, &ConfigError{Issues: issues}
 	}
 
 	return &decorrelatedJitter{
@@ -26,7 +26,7 @@ func NewDecorrelated(cfg Config) Strategy {
 		cap:    cfg.Cap,
 		random: cfg.Random,
 		sleep:  cfg.Base,
-	}
+	}, nil
 }
 
 // The attempt parameter is used only as a reset signal:

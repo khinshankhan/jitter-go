@@ -8,17 +8,17 @@ type fullJitter struct {
 }
 
 // NewFull returns a Strategy using the "full jitter" algorithm.
-// It panics if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
-func NewFull(cfg Config) Strategy {
-	if cfg.Base <= 0 || cfg.Cap <= 0 || cfg.Random == nil {
-		panic("jitter: invalid full jitter config")
+// Returns an error if cfg.Base <= 0, cfg.Cap <= 0, or cfg.Random is nil.
+func NewFull(cfg Config) (Strategy, error) {
+	if issues := getJitterConfigIssues(cfg); len(issues) > 0 {
+		return nil, &ConfigError{Issues: issues}
 	}
 
 	return &fullJitter{
 		base:   cfg.Base,
 		cap:    cfg.Cap,
 		random: cfg.Random,
-	}
+	}, nil
 }
 
 func (f *fullJitter) Next(attempt int) int64 {
