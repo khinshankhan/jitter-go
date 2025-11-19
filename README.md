@@ -8,7 +8,7 @@ Backoff and Jitter"](https://aws.amazon.com/blogs/architecture/exponential-backo
 ## Install
 
 ```sh
-go get github.com/khinshankhan/jitter-go
+go get github.com/khinshankhan/jitter-go@latest
 ```
 
 ## Overview
@@ -41,7 +41,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/khinshankhan/jitter-go"
+	"github.com/khinshankhan/jitter-go/v2"
 )
 
 func main() {
