@@ -8,7 +8,7 @@ Backoff and Jitter"](https://aws.amazon.com/blogs/architecture/exponential-backo
 ## Install
 
 ```sh
-go get github.com/khinshankhan/jitter-go@latest
+go get github.com/khinshankhan/jitter-go/v2@latest
 ```
 
 ## Overview
