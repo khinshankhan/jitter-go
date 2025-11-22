@@ -11,6 +11,8 @@ Backoff and Jitter"](https://aws.amazon.com/blogs/architecture/exponential-backo
 go get github.com/khinshankhan/jitter-go/v2@latest
 ```
 
+See [CHANGELOG.md](./CHANGELOG.md) for version history and migration notes.
+
 ## Overview
 
 The core API is intentionally tiny:
