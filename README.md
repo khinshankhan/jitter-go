@@ -1,5 +1,9 @@
 # jitter
 
+[![jitter version](https://img.shields.io/github/v/tag/khinshankhan/jitter-go?sort=semver)](https://github.com/khinshankhan/jitter-go/tags)
+[![Go Reference](https://pkg.go.dev/badge/github.com/khinshankhan/jitter-go/v2.svg)](https://pkg.go.dev/github.com/khinshankhan/jitter-go/v2)
+[![Go Report Card](https://goreportcard.com/badge/github.com/khinshankhan/jitter-go)](https://goreportcard.com/report/github.com/khinshankhan/jitter-go)
+
 Reusable jitter strategies to use for backoff. Minimal API, pluggable strategies, production-ready.
 
 This package provides a small set of jitter/backoff strategies based on the AWS ["Exponential
